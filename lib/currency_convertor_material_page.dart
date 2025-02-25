@@ -1,73 +1,91 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
-class CurrencyConvertorMaterialPage extends StatelessWidget {
-  const CurrencyConvertorMaterialPage({super.key});
+class CurrencyConverterScreen extends StatefulWidget {
+  @override
+  _CurrencyConverterScreenState createState() => _CurrencyConverterScreenState();
+}
+
+class _CurrencyConverterScreenState extends State<CurrencyConverterScreen> {
+  String fromCurrency = 'USD';
+  String toCurrency = 'EUR';
+  double exchangeRate = 1.0;
+  TextEditingController amountController = TextEditingController();
+  double convertedAmount = 0.0;
+
+  Future<void> fetchExchangeRate() async {
+    final url = Uri.parse('https://api.exchangerate-api.com/v4/latest/$fromCurrency');
+    final response = await http.get(url);
+    
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      setState(() {
+        exchangeRate = data['rates'][toCurrency];
+      });
+    } else {
+      throw Exception('Failed to load exchange rate');
+    }
+  }
+
+  void convertCurrency() {
+    double amount = double.tryParse(amountController.text) ?? 0.0;
+    setState(() {
+      convertedAmount = amount * exchangeRate;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    final border = OutlineInputBorder(
-      borderSide: const BorderSide(
-        width: 2.0,
-        style: BorderStyle.solid,
-      ),
-      borderRadius: BorderRadius.circular(60),
-    );
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white70,
-        title: const Text(
-          "Currency Conversion",
-          style: TextStyle(fontStyle: FontStyle.normal),
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.home_max),
-          iconSize: 35,
-          onPressed: () {},
-        ),
-      ),
-      backgroundColor: Colors.blueGrey,
-      body: Center(
+      appBar: AppBar(title: Text('Currency Converter')),
+      body: Padding(
+        padding: EdgeInsets.all(16.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text(
-              '0',
-              style: TextStyle(
-                fontSize: 55,
-                fontWeight: FontWeight.bold,
-                color: Color.fromARGB(255, 255, 255, 255),
-              ),
+            TextField(
+              controller: amountController,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(labelText: 'Enter amount'),
             ),
-            Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: TextField(
-                style: const TextStyle(
-                  color: Colors.black,
-                ),
-                decoration: InputDecoration(
-                  hintText: 'Please enter the amount in USD ',
-                  hintStyle: const TextStyle(
-                    color: Colors.black,
-                  ),
-                  prefixIcon: const Icon(Icons.monetization_on_outlined),
-                  prefixIconColor: Colors.black,
-                  filled: true,
-                  fillColor: Colors.white,
-                  focusedBorder: border,
-                  enabledBorder: border,
-                ),
-                keyboardType: const TextInputType.numberWithOptions(
-                  decimal: true,
-                  signed: true,
-                ),
-              ),
-            ),
-            TextButton(
-              onPressed: () {
-                print('Button Clicked');
+            DropdownButton<String>(
+              value: fromCurrency,
+              items: ['USD', 'EUR', 'GBP', 'INR'].map((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+              onChanged: (newValue) {
+                setState(() {
+                  fromCurrency = newValue!;
+                });
+                fetchExchangeRate();
               },
-              child: const Text('Click Me'),
             ),
+            DropdownButton<String>(
+              value: toCurrency,
+              items: ['USD', 'EUR', 'GBP', 'INR'].map((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+              onChanged: (newValue) {
+                setState(() {
+                  toCurrency = newValue!;
+                });
+                fetchExchangeRate();
+              },
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: convertCurrency,
+              child: Text('Convert'),
+            ),
+            SizedBox(height: 20),
+            Text('Converted Amount: \$${convertedAmount.toStringAsFixed(2)}',
+                style: TextStyle(fontSize: 20)),
           ],
         ),
       ),

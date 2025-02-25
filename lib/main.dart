@@ -2,16 +2,17 @@ import 'package:currency_converter/currency_convertor_material_page.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(CurrencyConverterApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
+class CurrencyConverterApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: CurrencyConvertorMaterialPage());
+    return MaterialApp(
+      title: 'Currency Converter',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: CurrencyConverterScreen(),
+    );
   }
 }
