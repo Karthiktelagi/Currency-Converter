@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+// ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class CurrencyConverterScreen extends StatefulWidget {
+  const CurrencyConverterScreen({super.key});
+
   @override
-  _CurrencyConverterScreenState createState() => _CurrencyConverterScreenState();
+  // ignore: library_private_types_in_public_api
+  _CurrencyConverterScreenState createState() =>
+      _CurrencyConverterScreenState();
 }
 
 class _CurrencyConverterScreenState extends State<CurrencyConverterScreen> {
@@ -15,9 +20,10 @@ class _CurrencyConverterScreenState extends State<CurrencyConverterScreen> {
   double convertedAmount = 0.0;
 
   Future<void> fetchExchangeRate() async {
-    final url = Uri.parse('https://api.exchangerate-api.com/v4/latest/$fromCurrency');
+    final url =
+        Uri.parse('https://api.exchangerate-api.com/v4/latest/$fromCurrency');
     final response = await http.get(url);
-    
+
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       setState(() {
@@ -38,15 +44,18 @@ class _CurrencyConverterScreenState extends State<CurrencyConverterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Currency Converter')),
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
+      
+      appBar:  AppBar(title: const Text('Currency Converter' ,),
+      backgroundColor: Colors.red[300],),
+      body: 
+      Padding(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             TextField(
               controller: amountController,
               keyboardType: TextInputType.number,
-              decoration: InputDecoration(labelText: 'Enter amount'),
+              decoration: const InputDecoration(labelText: 'Enter amount'),
             ),
             DropdownButton<String>(
               value: fromCurrency,
@@ -78,14 +87,14 @@ class _CurrencyConverterScreenState extends State<CurrencyConverterScreen> {
                 fetchExchangeRate();
               },
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: convertCurrency,
-              child: Text('Convert'),
+              child: const Text('Convert'),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Text('Converted Amount: \$${convertedAmount.toStringAsFixed(2)}',
-                style: TextStyle(fontSize: 20)),
+                style: const TextStyle(fontSize: 20)),
           ],
         ),
       ),
