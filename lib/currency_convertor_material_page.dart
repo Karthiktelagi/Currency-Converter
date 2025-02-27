@@ -30,7 +30,7 @@ class _CurrencyConverterScreenState extends State<CurrencyConverterScreen> {
         exchangeRate = data['rates'][toCurrency];
       });
     } else {
-      throw Exception('Failed to load exchange rate');
+      throw Exception('Failed to load exchange rate in the page');
     }
   }
 
