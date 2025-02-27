@@ -46,7 +46,7 @@ class _CurrencyConverterScreenState extends State<CurrencyConverterScreen> {
     return Scaffold(
       
       appBar:  AppBar(title: const Text('Currency Converter' ,),
-      backgroundColor: Colors.red[300],),
+      backgroundColor: Colors.blue,),
       body: 
       Padding(
         padding: const EdgeInsets.all(16.0),
